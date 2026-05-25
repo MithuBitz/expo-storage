@@ -1,117 +1,126 @@
-import { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Index() {
-  const [data, setData] = useState("");
+const IndexScreen = () => {
+  const [output, setOutput] = useState("");
 
-  //Save a object in async storage
-  const myObject = {
-    name: "Mibits",
-    salery: 45000,
-    isDeveloper: true,
+  const saveToken = async () => {
+    await SecureStore.setItemAsync("token", "mit345j");
+    setOutput("Token Saved");
   };
 
-  //SetItem
-  const saveData = async () => {
-    // await AsyncStorage.setItem("user", "Mithu");
-    await AsyncStorage.setItem("user", JSON.stringify(myObject)); // setItem need string
-    console.log("Savedata hit");
+  const getToken = async () => {
+    const value = await SecureStore.getItemAsync("token");
+
+    setOutput(value!);
   };
 
-  //GetItem
-  const getData = async () => {
-    const value = await AsyncStorage.getItem("user");
-    setData(value!);
-    console.log("Getdata hit");
+  const deleteToken = async () => {
+    await SecureStore.deleteItemAsync("token");
+
+    setOutput("Token deleted");
   };
 
-  //RemoveItem
-  const removeData = async () => {
-    await AsyncStorage.removeItem("user");
-    console.log("Remove data hit");
+  const checkAvailability = async () => {
+    const available = await SecureStore.isAvailableAsync();
+
+    setOutput(
+      available ? "SecureStore Available" : "SecureStore Not Available",
+    );
   };
 
-  // Remove all data
-  const clearStorage = async () => {
-    await AsyncStorage.clear();
+  const saveObject = async () => {
+    const user = {
+      name: "Code Snippet",
+      role: "Admin",
+    };
 
-    setData("");
-    console.log("Clear hit");
+    await SecureStore.setItemAsync("user", JSON.stringify(user));
+
+    setOutput("Object Saved");
   };
 
-  //Get all keys
-  const getKeys = async () => {
-    const keys = await AsyncStorage.getAllKeys();
-    console.log(keys);
-    console.log("getAllKeys hit");
-  };
+  const getObject = async () => {
+    const data = await SecureStore.getItemAsync("user");
 
-  //Save multiple data
-  const saveMultiple = async () => {
-    await AsyncStorage.multiSet([
-      ["name", "Mibits"],
-      ["role", "Developer"],
-    ]);
+    if (!data) {
+      setOutput("No User Found");
+      return;
+    }
 
-    console.log("multiSet hit");
-  };
+    const parsed = JSON.parse(data);
 
-  //Get multiple
-  const getMultiple = async () => {
-    const value = await AsyncStorage.multiGet(["name", "role"]);
-    console.log(value);
+    setOutput(`${parsed.name} - ${parsed.role}`);
   };
 
   return (
     <SafeAreaView
       style={{
         flex: 1,
-        justifyContent: "center",
-        padding: 20,
-        gap: 12,
       }}
     >
-      <Button title="Save Data" onPress={saveData} />
-
-      <Button title="Get Data" onPress={getData} />
-
-      <Button title="Remove Data" onPress={removeData} />
-
-      <Button title="Clear Storage" onPress={clearStorage} />
-
-      <Button title="Get All Keys" onPress={getKeys} />
-
-      <Button title="Multi Set" onPress={saveMultiple} />
-
-      <Button title="Multi Get" onPress={getMultiple} />
-
-      <View
-        style={{
-          marginTop: 20,
+      <ScrollView
+        contentContainerStyle={{
+          padding: 20,
+          gap: 12,
         }}
       >
         <Text
           style={{
-            fontSize: 18,
+            fontSize: 28,
             fontWeight: "bold",
+            marginBottom: 10,
           }}
         >
-          Output:
+          SecureStore Demo
         </Text>
 
-        <Text>{data}</Text>
-      </View>
+        <Button title="Save Token" onPress={saveToken} />
+
+        <Button title="Get Token" onPress={getToken} />
+
+        <Button title="Delete Token" onPress={deleteToken} />
+
+        <Button title="Check Availability" onPress={checkAvailability} />
+
+        <Button title="Save Object" onPress={saveObject} />
+
+        <Button title="Get Object" onPress={getObject} />
+
+        <View
+          style={{
+            marginTop: 30,
+            padding: 20,
+            borderWidth: 1,
+            borderRadius: 10,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              marginBottom: 10,
+            }}
+          >
+            Output
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 16,
+            }}
+          >
+            {output}
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+export default IndexScreen;
+
+const styles = StyleSheet.create({});
