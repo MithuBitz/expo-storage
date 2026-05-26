@@ -1,76 +1,183 @@
-import React, { useEffect, useState } from "react";
-import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
-
-import * as SQLite from "expo-sqlite";
+import { Directory, File, Paths } from "expo-file-system";
+import { Image } from "expo-image";
+import { useState } from "react";
+import { Button, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Create a database and create a connection
-const db = SQLite.openDatabaseSync("demo.db");
+const index = () => {
+  const [output, setOutput] = useState<string>("");
+  const [downloadedImageUri, setDownloadedImageUri] = useState<string | null>(
+    null,
+  );
 
-const IndexScreen = () => {
-  const [output, setOutput] = useState("");
+  // Write file
 
-  // Create a table with help of sqlite
-  const createTable = () => {
-    db.execSync(`
-        CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        age INTEGER   
-        );
-      `);
+  const demoFile = new File(Paths.document, "demo.txt");
 
-    setOutput("Table Created");
+  const copiedFile = new File(Paths.document, "copy-demo.txt");
+
+  const movedFile = new File(Paths.document, "moved-demo.txt");
+
+  const notesDirectory = new Directory(Paths.document, "notes");
+
+  console.log(notesDirectory);
+
+  const writeFile = () => {
+    demoFile.write("Hello expo filesystem");
+    setOutput("File written successfully");
   };
 
-  const insertData = () => {
-    db.runSync("INSERT INTO users (name, age) VALUES (?, ?)", "Niranjan", 30);
+  const readFile = async () => {
+    const data = await demoFile.text();
 
-    setOutput("Insert Data on table");
+    setOutput(data);
+
+    return data;
   };
 
-  const getUser = () => {
-    const users = db.getAllSync("SELECT * FROM users");
+  const appendFile = async () => {
+    const oldData = await demoFile.text();
 
-    setOutput(JSON.stringify(users, null, 2));
+    demoFile.write(oldData + "\n New Data Added");
+
+    setOutput("Data appended");
   };
 
-  const getFirstUser = () => {
-    const user = db.getFirstSync("SELECT * FROM users");
+  const copyFile = () => {
+    try {
+      if (!demoFile.exists) {
+        setOutput("demoFile does not exist");
+        return;
+      }
 
-    setOutput(JSON.stringify(user, null, 2));
+      // Delete existing destination file
+      if (copiedFile.exists) {
+        copiedFile.delete();
+      }
+
+      demoFile.copy(copiedFile);
+
+      setOutput("File copied successfully");
+    } catch (error) {
+      console.error(error);
+      setOutput("Error copying file");
+    }
   };
 
-  const updateUser = () => {
-    db.runSync("UPDATE users SET age = ? WHERE id = ?", 25, 1);
+  const moveFile = () => {
+    try {
+      if (!copiedFile.exists) {
+        setOutput("Source file does not exist");
+        return;
+      }
 
-    setOutput("User updated");
+      if (movedFile.exists) {
+        movedFile.delete();
+      }
+
+      copiedFile.move(movedFile);
+
+      setOutput("File moved successfully");
+    } catch (error) {
+      console.error(error);
+      setOutput("Error moving file");
+    }
   };
 
-  const deleteUser = () => {
-    db.runSync("DELETE FROM users WHERE id = ?", 1);
+  const deleteAllFile = () => {
+    if (demoFile.exists) {
+      demoFile.delete();
+    }
+    if (copiedFile.exists) {
+      copiedFile.delete();
+    }
+    if (movedFile.exists) {
+      movedFile.delete();
+    }
 
-    setOutput("User Deleted");
+    setOutput("File Deleted successfully");
   };
 
-  const dropTable = () => {
-    db.execSync(`
-      DROP TABLE IF EXISTS users;
-    `);
+  const getFileInfo = () => {
+    const info = {
+      exists: demoFile.exists,
+      size: demoFile.size,
+      uri: demoFile.uri,
+      name: demoFile.name,
+    };
 
-    setOutput("Table Dropped");
+    setOutput(JSON.stringify(info, null, 2));
   };
 
-  const statement = db.prepareSync("INSERT INTO users (name) VALUES (?)");
-  const reuseQuery = () => {
-    statement.executeSync(["Niranjan"]);
-    setOutput("Reuse query for add user");
+  const createFolder = () => {
+    try {
+      notesDirectory.create({
+        idempotent: true,
+        intermediates: true,
+      });
+
+      console.log("Folder created");
+      setOutput("Folder created");
+    } catch (error) {
+      console.error("Error creating folder:", error);
+    }
   };
 
-  //Run the createTable function on first render
-  useEffect(() => {
-    createTable();
-  }, []);
+  const readDir = () => {
+    const files = notesDirectory.list();
+    setOutput(
+      JSON.stringify(
+        files.map((f) => f.uri),
+        null,
+        2,
+      ),
+    );
+  };
+
+  const randomNumber = () => {
+    return Math.floor(Math.random() * 1000);
+  };
+
+  const downloadFile = async () => {
+    try {
+      const folder = new Directory(Paths.cache, "downloads");
+
+      // Create folder if it doesn't exist
+      folder.create({
+        idempotent: true,
+        intermediates: true,
+      });
+
+      // Create destination file
+      const file = new File(folder, `image${randomNumber()}.jpg`);
+
+      // Download file
+      const downloadedFile = await File.downloadFileAsync(
+        "https://picsum.photos/200",
+        file,
+      );
+
+      setDownloadedImageUri(downloadedFile.uri);
+
+      setOutput(
+        JSON.stringify(
+          {
+            uri: downloadedFile.uri,
+            exists: downloadedFile.exists,
+            size: downloadedFile.size,
+          },
+          null,
+          2,
+        ),
+      );
+
+      console.log(downloadedFile.uri);
+      console.log(downloadedFile.exists);
+      console.log(downloadedFile.size);
+    } catch (error) {
+      console.error("Download error:", error);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -91,24 +198,19 @@ const IndexScreen = () => {
             marginBottom: 10,
           }}
         >
-          SQLite Demo
+          Expo FileSystem Modern API
         </Text>
 
-        <Button title="Create Table" onPress={createTable} />
-
-        <Button title="Insert User" onPress={insertData} />
-
-        <Button title="Get All Users" onPress={getUser} />
-
-        <Button title="Get First User" onPress={getFirstUser} />
-
-        <Button title="Update User" onPress={updateUser} />
-
-        <Button title="Reuse Query" onPress={reuseQuery} />
-
-        <Button title="Delete User" onPress={deleteUser} />
-
-        <Button title="Drop Table" onPress={dropTable} />
+        <Button title="1. Write File" onPress={writeFile} />
+        <Button title="2. Read File" onPress={readFile} />
+        <Button title="3. Append File" onPress={appendFile} />
+        <Button title="4. Get File Info" onPress={getFileInfo} />
+        <Button title="5. Copy File" onPress={copyFile} />
+        <Button title="6. Move File" onPress={moveFile} />
+        <Button title="7. Create Folder" onPress={createFolder} />
+        <Button title="8. Read Directory" onPress={readDir} />
+        <Button title="9. Download File" onPress={downloadFile} />
+        <Button title="10. Delete All Files" onPress={deleteAllFile} />
 
         <View
           style={{
@@ -128,20 +230,67 @@ const IndexScreen = () => {
             Output
           </Text>
 
-          <Text
-            selectable
+          <Text selectable>{output}</Text>
+        </View>
+
+        {downloadedImageUri ? (
+          <View
             style={{
-              fontSize: 14,
+              marginTop: 20,
+              alignItems: "center",
+              gap: 8,
             }}
           >
-            {output}
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+              }}
+            >
+              Downloaded Image
+            </Text>
+
+            <Image
+              source={{ uri: downloadedImageUri }}
+              style={{
+                width: 300,
+                height: 300,
+                borderRadius: 10,
+              }}
+              contentFit="cover"
+            />
+          </View>
+        ) : null}
+
+        <View
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            Paths.document
           </Text>
+
+          <Text selectable>{Paths.document.uri}</Text>
+
+          <Text
+            style={{
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            Paths.cache
+          </Text>
+
+          <Text selectable>{Paths.cache.uri}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default IndexScreen;
-
-const styles = StyleSheet.create({});
+export default index;
