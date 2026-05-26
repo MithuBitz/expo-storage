@@ -21,6 +21,11 @@ The home screen (`src/app/index.tsx`) demonstrates creating a table, CRUD operat
     - [About](#about-1)
     - [Features](#features-1)
     - [Tech Stack](#tech-stack-1)
+  - [AsyncStorage Reference](#asyncstorage-reference)
+    - [About](#about-2)
+    - [Features](#features-2)
+    - [Tech Stack](#tech-stack-2)
+    - [Database Operations](#database-operations-1)
   - [Notes](#notes)
 
 ---
@@ -119,6 +124,46 @@ The app demonstrates storing, retrieving, and deleting secure key/value data suc
 | Framework | Expo              |
 | Storage   | expo-secure-store |
 | Language  | TypeScript        |
+
+---
+
+## AsyncStorage Reference
+
+> This section documents async key/value storage using `@react-native-async-storage/async-storage`. It provides simple, persistent storage for non-sensitive app data like user preferences and UI state.
+
+### About
+
+The app demonstrates storing, retrieving, updating, and deleting async key/value data using AsyncStorage APIs. This is ideal for app settings, user preferences, and non-sensitive cached data.
+
+### Features
+
+- Save key/value data asynchronously
+- Retrieve stored values by key
+- Update existing values
+- Delete individual keys or clear all storage
+- JSON serialization support
+- Persistent storage across app sessions
+- Non-encrypted, suitable for public data
+
+### Tech Stack
+
+| Layer     | Technology                                |
+| --------- | ----------------------------------------- |
+| Framework | Expo                                      |
+| Storage   | @react-native-async-storage/async-storage |
+| Language  | TypeScript                                |
+
+### Database Operations
+
+| Operation        | API / Pattern                            | Notes                            |
+| ---------------- | ---------------------------------------- | -------------------------------- |
+| Set Item         | `AsyncStorage.setItem(key, value)`       | Stores string or serialized JSON |
+| Get Item         | `AsyncStorage.getItem(key)`              | Retrieves value by key           |
+| Get All Items    | `AsyncStorage.getAllKeys()` + `multiGet` | Returns all stored data          |
+| Update           | `AsyncStorage.setItem(key, newValue)`    | Overwrites existing value        |
+| Remove Item      | `AsyncStorage.removeItem(key)`           | Deletes single key               |
+| Clear All        | `AsyncStorage.clear()`                   | Removes all stored data          |
+| Multi Operations | `AsyncStorage.multiSet/multiGet`         | Batch operations for efficiency  |
 
 ---
 
