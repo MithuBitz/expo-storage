@@ -27,6 +27,10 @@ The home screen (`src/app/index.tsx`) demonstrates creating a table, CRUD operat
     - [Tech Stack](#tech-stack-2)
     - [Database Operations](#database-operations-1)
   - [Notes](#notes)
+- [Prerequisites](#prerequisites)
+- [Available Scripts](#available-scripts)
+- [Project Structure](#project-structure)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -171,3 +175,58 @@ The app demonstrates storing, retrieving, updating, and deleting async key/value
 
 - The SQLite section appears first in the UI; SecureStore reference is kept for documentation.
 - Both storage approaches are available and can be toggled via the app's navigation.
+
+---
+
+## Prerequisites
+
+- Node.js 18+ (LTS recommended)
+- npm (bundled with Node.js) or Bun if you prefer Bun workflows
+- Expo Go app on Android/iOS device (optional, for device testing)
+
+---
+
+## Available Scripts
+
+Run these commands from the project root:
+
+```bash
+npm run start
+npm run android
+npm run ios
+npm run web
+npm run lint
+```
+
+- `npm run start` - Starts the Expo development server
+- `npm run android` - Opens the app on Android
+- `npm run ios` - Opens the app on iOS (macOS + Xcode required)
+- `npm run web` - Runs the app in a web browser
+- `npm run lint` - Runs Expo lint checks
+
+---
+
+## Project Structure
+
+```text
+data-storage/
+  src/
+    app/
+      index.tsx        # Main SQLite demo UI and actions
+  scripts/
+    reset-project.js   # Utility script to reset starter files
+  package.json         # Scripts and dependency definitions
+```
+
+---
+
+## Troubleshooting
+
+- If Metro cache causes stale output, restart with:
+
+  ```bash
+  npx expo start --clear
+  ```
+
+- If SQLite actions fail unexpectedly, verify table creation has been run (`Create Table` button) before insert/update/delete actions.
+- If emulator/device does not connect, ensure both machine and device are on the same network and try reloading from Expo Dev Tools.
