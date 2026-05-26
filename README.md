@@ -1,19 +1,10 @@
-<p align="center">
-  <img src="./assets/images/icon.png" alt="Data Storage app icon" width="96" />
-</p>
 
-<h1 align="center">Data Storage</h1>
 
-<p align="center">
-  A cross-platform Expo demo for persisting sensitive data with <strong>expo-secure-store</strong>.
-</p>
+# Data Storage
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Expo-55-blue?logo=expo&logoColor=white" alt="Expo SDK 55" />
-  <img src="https://img.shields.io/badge/React%20Native-0.83-61DAFB?logo=react&logoColor=white" alt="React Native" />
-  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Platforms-iOS%20%7C%20Android%20%7C%20Web-lightgrey" alt="Platforms" />
-</p>
+A cross-platform Expo demo for persisting sensitive data with **expo-secure-store**.
+
+
 
 ---
 
@@ -25,8 +16,9 @@ Built with [Expo Router](https://docs.expo.dev/router/introduction/) file-based 
 
 ## Preview
 
-<!-- Replace with a screenshot or GIF from your device/emulator -->
-<!-- ![SecureStore Demo](./docs/screenshot.png) -->
+
+
+
 
 > Run the app and use the buttons on the home screen; results appear in the **Output** panel.
 
@@ -40,6 +32,7 @@ Built with [Expo Router](https://docs.expo.dev/router/introduction/) file-based 
 
 ## Tech stack
 
+
 | Layer          | Choice                                                                       |
 | -------------- | ---------------------------------------------------------------------------- |
 | Framework      | [Expo](https://expo.dev) ~55                                                 |
@@ -48,11 +41,13 @@ Built with [Expo Router](https://docs.expo.dev/router/introduction/) file-based 
 | Secure storage | [expo-secure-store](https://docs.expo.dev/versions/v55.0.0/sdk/securestore/) |
 | Language       | TypeScript                                                                   |
 
+
 `@react-native-async-storage/async-storage` is listed in dependencies for general async persistence; the current UI demo uses **SecureStore** only.
 
 ## How it works
 
 The main screen (`src/app/index.tsx`) demonstrates:
+
 
 | Action             | API                               | Stored key |
 | ------------------ | --------------------------------- | ---------- |
@@ -63,6 +58,7 @@ The main screen (`src/app/index.tsx`) demonstrates:
 | Save Object        | `setItemAsync` + `JSON.stringify` | `user`     |
 | Get Object         | `getItemAsync` + `JSON.parse`     | `user`     |
 
+
 ### Platform notes
 
 - **Secure storage** uses the platform keychain/keystore where available.
@@ -71,7 +67,7 @@ The main screen (`src/app/index.tsx`) demonstrates:
 
 ## Project structure
 
-data-storage/ ├── assets/ # App icons, splash, favicon ├── src/ │ └── app/ │ ├── \_layout.tsx # Root stack (Expo Router) │ └── index.tsx # SecureStore demo screen ├── app.json # Expo config (incl. expo-secure-store plugin) ├── package.json └── README.md
+data-storage/ ├── assets/ # App icons, splash, favicon ├── src/ │ └── app/ │ ├── layout.tsx # Root stack (Expo Router) │ └── index.tsx # SecureStore demo screen ├── app.json # Expo config (incl. expo-secure-store plugin) ├── package.json └── README.md
 
 ## Getting started
 
@@ -115,7 +111,7 @@ Expo documentation
 License
 Private project — add a license file if you plan to open-source or share.
 
----
+
 ## Small tweaks you might want
 1. **Title alignment** — If this is a course/lab repo, add a subtitle under the hero: e.g. *“MobDev — local & secure storage”*.
 2. **Screenshot** — Capture the “SecureStore Demo” screen with Output filled; put it in `docs/screenshot.png` and uncomment the Preview block.
@@ -124,3 +120,4 @@ Private project — add a license file if you plan to open-source or share.
 I’m in **Ask mode**, so I only provided the design and content. If you want this written into `README.md` automatically, switch to **Agent mode** and ask to apply it.
 
 ```
+
